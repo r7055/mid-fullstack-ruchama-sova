@@ -1,4 +1,3 @@
-using FluentAssertions;
 using Microsoft.AspNetCore.SignalR;
 using Moq;
 using RealTimeMonitor.Hubs;
@@ -36,9 +35,10 @@ public class TransactionServiceTests
 
         repo.Verify(r => r.Add(It.IsAny<Transaction>()), Times.Once);
         clientProxy.Verify(
-            c => c.SendAsync("ReceiveTransaction",
-                It.IsAny<Transaction>(),
-                default),
+            c => c.SendCoreAsync(
+                "ReceiveTransaction",
+                It.Is<object?[]>(args => args.Length == 1 && ReferenceEquals(args[0], transaction)),
+                It.IsAny<CancellationToken>()),
             Times.Once);
     }
 }

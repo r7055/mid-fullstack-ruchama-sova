@@ -40,6 +40,32 @@ public class TransactionRepositoryTests
             });
         }
 
-        repo.GetAll().Count().Should().BeLessOrEqualTo(1000);
+        repo.GetAll().Count().Should().BeLessThanOrEqualTo(1000);
+    }
+
+    [Fact]
+    public async Task Add_ShouldBeThreadSafe_UnderConcurrency()
+    {
+        var repo = new TransactionRepository();
+        const int tasksCount = 20;
+        const int itemsPerTask = 100;
+
+        var tasks = Enumerable.Range(0, tasksCount).Select(_ => Task.Run(() =>
+        {
+            for (int i = 0; i < itemsPerTask; i++)
+            {
+                repo.Add(new Transaction
+                {
+                    TransactionId = Guid.NewGuid(),
+                    Amount = 100,
+                    Currency = "USD",
+                    Status = TransactionStatus.Completed
+                });
+            }
+        }));
+
+        await Task.WhenAll(tasks);
+
+        repo.GetAll().Count().Should().BeLessThanOrEqualTo(1000);
     }
 }
