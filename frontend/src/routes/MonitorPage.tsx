@@ -6,11 +6,15 @@ import { TRANSACTION_STATUSES } from "../types";
 import type { Transaction, TransactionFilter } from "../types";
 
 type LiveConnectionState = "connecting" | "connected" | "reconnecting" | "disconnected" | "error";
+type MonitorTransaction = Transaction & {
+  isNew?: boolean;
+  isStatusTransition?: boolean;
+};
 
 const MAX_TRANSACTIONS = 1000;
 
 export function MonitorPage() {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [transactions, setTransactions] = useState<MonitorTransaction[]>([]);
   const [filter, setFilter] = useState<TransactionFilter>("All");
   const [connectionState, setConnectionState] = useState<LiveConnectionState>("connecting");
   const [error, setError] = useState<string>("");
@@ -29,7 +33,23 @@ export function MonitorPage() {
     pendingTransactions.current = [];
 
     setTransactions((previous) => {
-      const merged = [...nextBatch.reverse(), ...previous];
+      const latestStatusById = new Map<string, Transaction["status"]>();
+      for (const item of previous) {
+        if (!latestStatusById.has(item.transactionId)) {
+          latestStatusById.set(item.transactionId, item.status);
+        }
+      }
+
+      const incoming = nextBatch.reverse().map((item) => {
+        const previousStatus = latestStatusById.get(item.transactionId);
+        return {
+          ...item,
+          isNew: true,
+          isStatusTransition: previousStatus !== undefined && previousStatus !== item.status
+        } as MonitorTransaction;
+      });
+
+      const merged = [...incoming, ...previous];
       return merged.slice(0, MAX_TRANSACTIONS);
     });
   }, []);
@@ -43,7 +63,13 @@ export function MonitorPage() {
           return;
         }
 
-        setTransactions(items.slice(-MAX_TRANSACTIONS).reverse());
+        setTransactions(
+          items.slice(-MAX_TRANSACTIONS).reverse().map((item) => ({
+            ...item,
+            isNew: false,
+            isStatusTransition: false
+          }))
+        );
       })
       .catch(() => {
         if (!isActive) {
@@ -208,11 +234,18 @@ export function MonitorPage() {
           </thead>
           <tbody>
             {filteredTransactions.map((transaction) => (
-              <tr key={`${transaction.transactionId}-${transaction.timestamp}`}>
+              <tr
+                key={`${transaction.transactionId}-${transaction.timestamp}`}
+                className={transaction.isNew ? "transaction-row row-new" : "transaction-row"}
+              >
                 <td>{formatTimestamp(transaction.timestamp)}</td>
                 <td className="mono-cell">{transaction.transactionId}</td>
                 <td>
-                  <span className={`status-badge ${transaction.status.toLowerCase()}`}>
+                  <span
+                    className={`status-badge ${transaction.status.toLowerCase()}${
+                      transaction.isStatusTransition ? " status-transition" : ""
+                    }`}
+                  >
                     {transaction.status}
                   </span>
                 </td>

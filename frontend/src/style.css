@@ -11,6 +11,7 @@
   --danger: #c6402e;
   --success: #237d47;
   --pending: #8a6f12;
+  --highlight: rgba(30, 107, 115, 0.18);
   --panel: rgba(255, 255, 255, 0.86);
   --panel-stroke: rgba(20, 32, 40, 0.13);
   --shadow: 0 20px 40px rgba(20, 32, 40, 0.1);
@@ -250,6 +251,14 @@ tbody td {
   padding: 0.64rem 0.7rem;
 }
 
+.transaction-row {
+  transition: background-color 220ms ease;
+}
+
+.transaction-row.row-new {
+  animation: row-enter 560ms cubic-bezier(0.18, 0.8, 0.2, 1);
+}
+
 .mono-cell {
   font-family: "IBM Plex Mono", monospace;
   font-size: 0.84rem;
@@ -261,6 +270,11 @@ tbody td {
   font-size: 0.82rem;
   font-weight: 600;
   color: #fff;
+  transition: background-color 260ms ease, transform 260ms ease, box-shadow 260ms ease;
+}
+
+.status-badge.status-transition {
+  animation: status-pulse 700ms ease;
 }
 
 .status-badge.pending {
@@ -284,6 +298,41 @@ tbody td {
   to {
     transform: translateY(0);
     opacity: 1;
+  }
+}
+
+@keyframes row-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
+    background-color: var(--highlight);
+  }
+
+  65% {
+    opacity: 1;
+    transform: translateY(0);
+    background-color: rgba(30, 107, 115, 0.08);
+  }
+
+  100% {
+    background-color: transparent;
+  }
+}
+
+@keyframes status-pulse {
+  0% {
+    transform: scale(0.92);
+    box-shadow: 0 0 0 0 rgba(30, 107, 115, 0.42);
+  }
+
+  60% {
+    transform: scale(1.06);
+    box-shadow: 0 0 0 0.35rem rgba(30, 107, 115, 0);
+  }
+
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(30, 107, 115, 0);
   }
 }
 
