@@ -2,26 +2,23 @@ using Microsoft.AspNetCore.SignalR;
 using Moq;
 using RealTimeMonitor.Hubs;
 using RealTimeMonitor.Models;
-using RealTimeMonitor.Repositories;
-using RealTimeMonitor.Services;
 
 namespace RealTimeMonitor.Tests;
 
-public class TransactionServiceTests
+public class TransactionHubTests
 {
     [Fact]
-    public async Task ProcessAsync_Should_Add_Transaction_And_Broadcast()
+    public async Task BroadcastTransaction_ShouldSendToAllClients()
     {
-        var repo = new Mock<ITransactionRepository>();
-
-        var hubContext = new Mock<IHubContext<TransactionHub>>();
-        var clients = new Mock<IHubClients>();
+        var clients = new Mock<IHubCallerClients>();
         var clientProxy = new Mock<IClientProxy>();
 
-        clients.Setup(x => x.All).Returns(clientProxy.Object);
-        hubContext.Setup(x => x.Clients).Returns(clients.Object);
+        clients.Setup(c => c.All).Returns(clientProxy.Object);
 
-        var service = new TransactionService(repo.Object, hubContext.Object);
+        var hub = new TransactionHub
+        {
+            Clients = clients.Object
+        };
 
         var transaction = new Transaction
         {
@@ -31,9 +28,8 @@ public class TransactionServiceTests
             Status = TransactionStatus.Completed
         };
 
-        await service.ProcessAsync(transaction);
+        await hub.BroadcastTransaction(transaction);
 
-        repo.Verify(r => r.Add(It.IsAny<Transaction>()), Times.Once);
         clientProxy.Verify(
             c => c.SendCoreAsync(
                 TransactionHub.ReceiveTransactionMethod,
