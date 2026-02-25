@@ -44,28 +44,83 @@ public class TransactionRepositoryTests
     }
 
     [Fact]
-    public async Task Add_ShouldBeThreadSafe_UnderConcurrency()
+    public async Task Add_ShouldBeThreadSafe_With100ParallelAdds()
     {
         var repo = new TransactionRepository();
-        const int tasksCount = 20;
-        const int itemsPerTask = 100;
+        const int parallelAdds = 100;
 
-        var tasks = Enumerable.Range(0, tasksCount).Select(_ => Task.Run(() =>
+        var tasks = Enumerable.Range(0, parallelAdds).Select(_ => Task.Run(() =>
         {
-            for (int i = 0; i < itemsPerTask; i++)
+            repo.Add(new Transaction
             {
-                repo.Add(new Transaction
-                {
-                    TransactionId = Guid.NewGuid(),
-                    Amount = 100,
-                    Currency = "USD",
-                    Status = TransactionStatus.Completed
-                });
-            }
+                TransactionId = Guid.NewGuid(),
+                Amount = 100,
+                Currency = "USD",
+                Status = TransactionStatus.Completed
+            });
         }));
 
         await Task.WhenAll(tasks);
 
-        repo.GetAll().Count().Should().BeLessThanOrEqualTo(1000);
+        repo.GetAll().Should().HaveCount(parallelAdds);
+    }
+
+    [Fact]
+    public void Repository_ShouldKeepLatest_1000_Transactions()
+    {
+        var repo = new TransactionRepository();
+        var insertedIds = new List<Guid>();
+
+        for (int i = 0; i < 1100; i++)
+        {
+            var id = Guid.NewGuid();
+            insertedIds.Add(id);
+
+            repo.Add(new Transaction
+            {
+                TransactionId = id,
+                Amount = 100,
+                Currency = "USD",
+                Status = TransactionStatus.Completed
+            });
+        }
+
+        var storedIds = repo.GetAll().Select(t => t.TransactionId).ToList();
+        var expectedIds = insertedIds.Skip(100).ToList();
+
+        storedIds.Should().Equal(expectedIds);
+    }
+
+    [Fact]
+    public void GetAll_ShouldReturnTransactions_InInsertionOrder()
+    {
+        var repo = new TransactionRepository();
+        var first = Guid.NewGuid();
+        var second = Guid.NewGuid();
+        var third = Guid.NewGuid();
+
+        repo.Add(new Transaction
+        {
+            TransactionId = first,
+            Amount = 100,
+            Currency = "USD",
+            Status = TransactionStatus.Completed
+        });
+        repo.Add(new Transaction
+        {
+            TransactionId = second,
+            Amount = 200,
+            Currency = "USD",
+            Status = TransactionStatus.Completed
+        });
+        repo.Add(new Transaction
+        {
+            TransactionId = third,
+            Amount = 300,
+            Currency = "USD",
+            Status = TransactionStatus.Completed
+        });
+
+        repo.GetAll().Select(t => t.TransactionId).Should().Equal(first, second, third);
     }
 }

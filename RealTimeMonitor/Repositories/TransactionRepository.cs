@@ -1,25 +1,31 @@
-using System.Collections.Concurrent;
 using RealTimeMonitor.Models;
 
 namespace RealTimeMonitor.Repositories;
 
 public class TransactionRepository : ITransactionRepository
 {
-    private readonly ConcurrentQueue<Transaction> _transactions = new();
+    private const int MaxTransactions = 1000;
+    private readonly Queue<Transaction> _transactions = new();
+    private readonly object _sync = new();
 
     public void Add(Transaction transaction)
     {
-        _transactions.Enqueue(transaction);
-
-        // נשמור מקסימום 1000
-        while (_transactions.Count > 1000)
+        lock (_sync)
         {
-            _transactions.TryDequeue(out _);
+            _transactions.Enqueue(transaction);
+
+            while (_transactions.Count > MaxTransactions)
+            {
+                _transactions.Dequeue();
+            }
         }
     }
 
     public IEnumerable<Transaction> GetAll()
     {
-        return _transactions.ToList();
+        lock (_sync)
+        {
+            return _transactions.ToList();
+        }
     }
 }
