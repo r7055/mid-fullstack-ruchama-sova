@@ -25,6 +25,6 @@ public class TransactionService : ITransactionService
         _repository.Add(transaction);
 
         await _hubContext.Clients.All
-            .SendAsync("ReceiveTransaction", transaction);
+            .SendAsync(TransactionHub.ReceiveTransactionMethod, transaction);
     }
 }
