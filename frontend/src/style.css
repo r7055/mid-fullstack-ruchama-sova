@@ -1,0 +1,305 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap");
+
+:root {
+  --bg: #faf7f0;
+  --bg-secondary: #f3ecde;
+  --ink: #142028;
+  --ink-soft: #4d5e68;
+  --primary: #1e6b73;
+  --primary-strong: #144c55;
+  --accent: #f5aa2a;
+  --danger: #c6402e;
+  --success: #237d47;
+  --pending: #8a6f12;
+  --panel: rgba(255, 255, 255, 0.86);
+  --panel-stroke: rgba(20, 32, 40, 0.13);
+  --shadow: 0 20px 40px rgba(20, 32, 40, 0.1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background:
+    radial-gradient(circle at 10% 10%, rgba(245, 170, 42, 0.2), transparent 40%),
+    radial-gradient(circle at 90% 20%, rgba(30, 107, 115, 0.24), transparent 38%),
+    linear-gradient(140deg, var(--bg), var(--bg-secondary));
+  color: var(--ink);
+  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+}
+
+#app {
+  min-height: 100vh;
+}
+
+h1,
+h2 {
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  padding: 0.65rem 1rem;
+  background: var(--primary);
+  color: #fff;
+  transition: transform 120ms ease, background 120ms ease;
+}
+
+button:hover:not(:disabled) {
+  background: var(--primary-strong);
+  transform: translateY(-1px);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.app-shell {
+  width: min(1200px, 94vw);
+  margin: 2rem auto 2.4rem;
+}
+
+.app-header {
+  background: var(--panel);
+  border: 1px solid var(--panel-stroke);
+  box-shadow: var(--shadow);
+  border-radius: 24px;
+  padding: 1.4rem 1.4rem 1.2rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.eyebrow {
+  color: var(--ink-soft);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.backend-tag {
+  margin-top: 0.35rem;
+  color: var(--ink-soft);
+}
+
+.top-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: var(--ink);
+  border: 1px solid var(--panel-stroke);
+  border-radius: 999px;
+  padding: 0.45rem 0.95rem;
+  background: rgba(255, 255, 255, 0.65);
+}
+
+.nav-link.active {
+  border-color: transparent;
+  color: #fff;
+  background: linear-gradient(130deg, var(--primary), var(--primary-strong));
+}
+
+.app-main {
+  margin-top: 1rem;
+}
+
+.card-panel {
+  background: var(--panel);
+  border: 1px solid var(--panel-stroke);
+  box-shadow: var(--shadow);
+  border-radius: 24px;
+  padding: 1.2rem;
+  animation: panel-in 250ms ease;
+}
+
+.panel-subtitle {
+  margin-top: 0.45rem;
+  color: var(--ink-soft);
+}
+
+.form-grid {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.form-grid label {
+  display: grid;
+  gap: 0.35rem;
+  color: var(--ink-soft);
+  font-size: 0.94rem;
+}
+
+.form-grid input,
+.form-grid select {
+  border: 1px solid var(--panel-stroke);
+  border-radius: 12px;
+  padding: 0.55rem 0.75rem;
+  background: #fff;
+  color: var(--ink);
+}
+
+.actions-row {
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.feedback {
+  margin-top: 0.85rem;
+  color: var(--ink-soft);
+}
+
+.feedback.error {
+  color: var(--danger);
+}
+
+.monitor-toolbar {
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.connection-chip {
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  color: #fff;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.connection-chip.connecting,
+.connection-chip.reconnecting {
+  background: var(--pending);
+}
+
+.connection-chip.connected {
+  background: var(--success);
+}
+
+.connection-chip.disconnected,
+.connection-chip.error {
+  background: var(--danger);
+}
+
+.inline-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.inline-label select {
+  border: 1px solid var(--panel-stroke);
+  border-radius: 12px;
+  padding: 0.4rem 0.55rem;
+}
+
+.count-pill {
+  border-radius: 999px;
+  background: rgba(20, 32, 40, 0.08);
+  padding: 0.33rem 0.74rem;
+  color: var(--ink-soft);
+}
+
+.table-wrap {
+  margin-top: 0.85rem;
+  overflow-x: auto;
+  border-radius: 16px;
+  border: 1px solid var(--panel-stroke);
+  background: #fff;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+thead th {
+  text-align: left;
+  background: rgba(20, 32, 40, 0.06);
+  color: var(--ink-soft);
+  padding: 0.7rem;
+}
+
+tbody td {
+  border-top: 1px solid rgba(20, 32, 40, 0.08);
+  padding: 0.64rem 0.7rem;
+}
+
+.mono-cell {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.84rem;
+}
+
+.status-badge {
+  border-radius: 999px;
+  padding: 0.2rem 0.58rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.status-badge.pending {
+  background: var(--pending);
+}
+
+.status-badge.completed {
+  background: var(--success);
+}
+
+.status-badge.failed {
+  background: var(--danger);
+}
+
+@keyframes panel-in {
+  from {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 760px) {
+  .app-shell {
+    width: min(100%, 96vw);
+    margin-top: 1rem;
+  }
+
+  .app-header,
+  .card-panel {
+    border-radius: 16px;
+    padding: 1rem;
+  }
+
+  table {
+    font-size: 0.88rem;
+  }
+}
