@@ -41,6 +41,8 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 var app = builder.Build();
 app.UseCors(FrontendCorsPolicy);
 
+app.MapGet("/health", () => Results.Ok(new { status = "ok" }));
+
 app.MapPost("/transactions",
     async (Transaction transaction,
            ITransactionService service) =>

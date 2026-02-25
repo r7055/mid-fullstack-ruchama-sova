@@ -1,0 +1,11 @@
+.git
+.github
+.vs
+**/bin
+**/obj
+**/node_modules
+frontend
+RealTimeMonitor.Tests
+*.user
+*.suo
+*.pdb
