@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: real-time-monitor
+  labels:
+    app: real-time-monitor
+spec:
+  type: ClusterIP
+  selector:
+    app: real-time-monitor
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080
