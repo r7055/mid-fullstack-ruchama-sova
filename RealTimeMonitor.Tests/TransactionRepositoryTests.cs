@@ -68,4 +68,30 @@ public class TransactionRepositoryTests
 
         repo.GetAll().Count().Should().BeLessThanOrEqualTo(1000);
     }
+
+    [Fact]
+    public void Repository_ShouldKeepLatest_1000_Transactions()
+    {
+        var repo = new TransactionRepository();
+        var insertedIds = new List<Guid>();
+
+        for (int i = 0; i < 1100; i++)
+        {
+            var id = Guid.NewGuid();
+            insertedIds.Add(id);
+
+            repo.Add(new Transaction
+            {
+                TransactionId = id,
+                Amount = 100,
+                Currency = "USD",
+                Status = TransactionStatus.Completed
+            });
+        }
+
+        var storedIds = repo.GetAll().Select(t => t.TransactionId).ToList();
+        var expectedIds = insertedIds.Skip(100).ToList();
+
+        storedIds.Should().Equal(expectedIds);
+    }
 }
