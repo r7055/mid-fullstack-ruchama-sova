@@ -25,3 +25,4 @@ C:\Users\user1\Desktop\mid-fullstack-project\RealTimeMonitor\obj\Debug\net9.0\re
 C:\Users\user1\Desktop\mid-fullstack-project\RealTimeMonitor\obj\Debug\net9.0\RealTimeMonitor.pdb
 C:\Users\user1\Desktop\mid-fullstack-project\RealTimeMonitor\obj\Debug\net9.0\RealTimeMonitor.genruntimeconfig.cache
 C:\Users\user1\Desktop\mid-fullstack-project\RealTimeMonitor\obj\Debug\net9.0\ref\RealTimeMonitor.dll
+C:\Users\user1\Desktop\mid-fullstack-project\RealTimeMonitor\obj\Debug\net9.0\RealTimeMonitor.sourcelink.json
